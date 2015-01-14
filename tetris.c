@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <curses.h>
+#include <signal.h>
+#include <sys/time.h>
 #define width 10
 #define height 20
 typedef struct{
@@ -25,16 +27,24 @@ void AddShape(int a[height][width],TetrisInfo Tetristemp);
 void DelShape(int a[height][width],TetrisInfo Tetristemp);
 void ShapeMove(int a[height][width], unsigned char dir);
 void IsScore(int a[height][width]);
+void irq_time(int);
 
 int main(void)
 {
 	int i, j;
 	unsigned char ch;
+	struct itimerval value,ovalue;
+	value.it_value.tv_sec=1;
+	value.it_value.tv_usec=0;
+	value.it_interval.tv_sec=1;
+	value.it_interval.tv_usec=0;
 	CurrentTetris.loc_x = 5;
 	CurrentTetris.loc_y = 0;
 	CurrentTetris.shape_m =1;
 	CurrentTetris.shape_n =2;
 	score=0;
+	signal(SIGALRM,irq_time);
+	setitimer(ITIMER_REAL,&value,&ovalue);
 	initscr();
 	clear();
 	i = 0;
@@ -194,6 +204,13 @@ void IsScore(int a[height][width])
 		}
 
 	}
+}
+
+void irq_time(int signo)
+{
+	ShapeMove(GameRegion,'s');
+	DrawGameRegion();
+
 }
 
 //void GenNewShape(int a[height][width])
