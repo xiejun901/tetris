@@ -27,6 +27,7 @@ void AddShape(int a[height][width],TetrisInfo Tetristemp);
 void DelShape(int a[height][width],TetrisInfo Tetristemp);
 void ShapeMove(int a[height][width], unsigned char dir);
 void IsScore(int a[height][width]);
+void DrawBG(void);
 void irq_time(int);
 
 int main(void)
@@ -34,10 +35,10 @@ int main(void)
 	int i, j;
 	unsigned char ch;
 	struct itimerval value,ovalue;
-	value.it_value.tv_sec=1;
-	value.it_value.tv_usec=0;
-	value.it_interval.tv_sec=1;
-	value.it_interval.tv_usec=0;
+	value.it_value.tv_sec=0;
+	value.it_value.tv_usec=500000;
+	value.it_interval.tv_sec=0;
+	value.it_interval.tv_usec=500000;
 	CurrentTetris.loc_x = 5;
 	CurrentTetris.loc_y = 0;
 	CurrentTetris.shape_m =1;
@@ -71,6 +72,7 @@ void DrawGameRegion(void)
 {
 	int i,j;
 	clear();
+	DrawBG();
 	for(i=0;i<height;i++)
 	{
 		for(j=0;j<width;j++)
@@ -213,6 +215,21 @@ void irq_time(int signo)
 	ShapeMove(GameRegion,'s');
 	DrawGameRegion();
 
+}
+
+void DrawBG(void)
+{
+	int i=0;
+	standout();
+	for(i=0;i<22;i++)
+		mvaddch(20,i,' ');
+	for(i=0;i<20;i++)
+	{
+		mvaddch(i,20,' ');
+		mvaddch(i,21,' ');
+	}
+	standend();
+//	refresh();
 }
 
 //void GenNewShape(int a[height][width])
